@@ -1,9 +1,40 @@
 'use strict';
 
+const { read } = require('node:fs');
 /**
  * Lógica pura del carrito de compras (sin I/O).
  * Formato de operación: "<id de producto> <cantidad a sumar>"
  */
+
+const readLine = require('node:readline');
+
+function validateUser() {
+  const rl = readLine.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  return new Promise((resolve) => {
+    function askName() {
+      rl.question("What's your name? ", (name) => {
+        const trimmedName = name.trim();
+
+        if (trimmedName.length === 0) {
+          console.log('Please enter a valid name.');
+          askName();
+          return;
+        }
+
+        console.log(`Hi ${trimmedName}`);
+        rl.close();
+        resolve(trimmedName);
+      });
+    }
+
+    askName();
+  });
+}
+
 
 function createCart() {
   return {};
@@ -83,4 +114,5 @@ module.exports = {
   parseCommand,
   formatCartMessage,
   processCommand,
+  validateUser,
 };

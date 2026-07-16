@@ -5,11 +5,21 @@ const {
   parseCommand,
   formatCartMessage,
   processCommand,
+  validateUser,
 } = require('../src/cart');
 
 describe('createCart', () => {
   test('retorna un carrito vacío', () => {
     expect(createCart()).toEqual({});
+  });
+});
+
+
+describe('validateUser', () => {
+  test('solicita y devuelve el nombre del usuario', async () => {
+    const name = await validateUser();
+
+    expect(name).toBe('Alexis');
   });
 });
 

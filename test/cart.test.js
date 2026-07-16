@@ -16,8 +16,13 @@ describe('createCart', () => {
 
 
 describe('validateUser', () => {
-  test('solicita y devuelve el nombre del usuario', async () => {
-    const name = await validateUser();
+  test('retorna el nombre ingresado', async () => {
+    const rl = {
+      question: (message, callback) => callback('Alexis'),
+      close: jest.fn(),
+    };
+
+    const name = await validateUser(rl);
 
     expect(name).toBe('Alexis');
   });

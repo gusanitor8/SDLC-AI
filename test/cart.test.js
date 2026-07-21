@@ -8,23 +8,55 @@ const {
   validateUser,
 } = require('../src/cart');
 
+
 describe('createCart', () => {
   test('retorna un carrito vacío', () => {
     expect(createCart()).toEqual({});
   });
 });
 
+const readLine = require('node:readline');
 
 describe('validateUser', () => {
-  test('retorna el nombre ingresado', async () => {
-    const rl = {
-      question: (message, callback) => callback('Alexis'),
-      close: jest.fn(),
-    };
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
 
-    const name = await validateUser(rl);
+  test('retorna el nombre ingresado', async () => {
+    const close = jest.fn();
+
+    jest.spyOn(readLine, 'createInterface').mockReturnValue({
+      question: jest.fn((message, callback) => callback('Alexis')),
+      close,
+    });
+
+    jest.spyOn(console, 'log').mockImplementation(() => { });
+
+    const name = await validateUser();
 
     expect(name).toBe('Alexis');
+    expect(close).toHaveBeenCalled();
+  });
+
+  test('vuelve a preguntar si el nombre está vacío', async () => {
+    const close = jest.fn();
+    const question = jest
+      .fn()
+      .mockImplementationOnce((message, callback) => callback('   '))
+      .mockImplementationOnce((message, callback) => callback('Alexis'));
+
+    jest.spyOn(readLine, 'createInterface').mockReturnValue({
+      question,
+      close,
+    });
+
+    jest.spyOn(console, 'log').mockImplementation(() => { });
+
+    const name = await validateUser();
+
+    expect(question).toHaveBeenCalledTimes(2);
+    expect(name).toBe('Alexis');
+    expect(close).toHaveBeenCalledTimes(1);
   });
 });
 
